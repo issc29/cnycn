@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+	
+    <meta charset="utf-8">
+    <title>CNYCN</title>
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+		width: 90%;
+        margin: 0px;
+        padding: 0px
+      }
+      .controls {
+        margin-top: 16px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #pac-input {
+        background-color: #fff;
+        padding: 0 11px 0 13px;
+        width: 400px;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 300;
+        text-overflow: ellipsis;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+        margin-left: -1px;
+        padding-left: 14px;  /* Regular padding-left + 1. */
+        width: 401px;
+      }
+
+      .pac-container {
+        font-family: Roboto;
+      }
+	  #map-selector
+	  {
+	    border: 2px solid ;
+		border-color: #fff;
+	  background-color: #D3D3D3;
+        padding: 0 11px 0 13px;
+        width: 100px;
+		height: 75px;
+	  
+	  }
+	  #legend
+	  {
+	   border: 2px solid ;
+		border-color: #fff;
+	  background-color: #D3D3D3;
+        padding: 0 11px 0 13px;
+        width: 200px;
+		height: 75px;
+	  
+	  }
+
+      #type-selector {
+        color: #fff;
+        background-color: #4d90fe;
+        padding: 5px 11px 0px 11px;
+      }
+
+      #type-selector label {
+        font-family: Roboto;
+        font-size: 13px;
+        font-weight: 300;
+      }
+
+    </style>
+	 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+	 <link rel="stylesheet" type="text/css" href="gdropdown.css" />
+    <script type="text/javascript" src="gdropdown.js"></script>
+	<script src="jquery-1.11.1.min.js"></script>
+	<script src="https://apis.google.com/js/client.js?onload=load"></script>
+
+
+    <script>
+
+var infowindow = new google.maps.InfoWindow();
+
+function initialize() {
+
+
+  var nyc = new google.maps.LatLng(40.7789, -73.9675);
+  var mapOptions = {
+    zoom:11,
+    center: nyc,
+	mapTypeId: google.maps.MapTypeId.ROADMAP,
+	  mapTypeControl: false,
+		  mapTypeControlOptions: {
+	      	style: google.maps.MapTypeControlStyle.DEFAULT 
+	       }
+  }
+	var markers = [];
+	  var types = document.getElementById('map-selector');
+	  var legend = document.getElementById('legend');
+	
+  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+  map.controls[google.maps.ControlPosition.TOP_RIGHT].push(types);
+  map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(legend);
+  var ft_id = '1e6gHMcnqnzXUBbC6HEQ1BNDCGyeN5_fY6nXvsUzl';
+ floodLayer  = new google.maps.FusionTablesLayer({
+    query: {
+      select: 'col8',
+      from: ft_id
+    },
+	suppressInfoWindows: true,
+    styles: [{
+      polygonOptions: {
+        fillColor: '#FFFFFF',
+        fillOpacity: 0.1
+      }
+    }, {
+      where: "col4 = 'Shaded X'",
+      polygonOptions: {
+        fillColor: '#FFCC00',
+		fillOpacity: 0.5
+      }
+    }, {
+      where: "col4 IN ('A','AE','AO')",
+      polygonOptions: {
+	    fillColor: '#990099',
+        fillOpacity: 0.5
+      }
+    }, {
+      where: "col4  IN ('V','VE')",
+      polygonOptions: {
+	    fillColor: '#FF6600',
+        fillOpacity: 0.5
+      }
+    }]
+  });
+
+  floodLayer.setMap(map);
+  
+  
+    var current_map_radioButton = document.getElementById('current_flood_map');
+	
+	google.maps.event.addDomListener(current_map_radioButton, 'click', function() {
+	floodLayer.setMap(null);
+	ft_id = '1e6gHMcnqnzXUBbC6HEQ1BNDCGyeN5_fY6nXvsUzl';			
+ floodLayer = new google.maps.FusionTablesLayer({
+    query: {
+      select: 'col8',
+      from: ft_id
+    },
+	suppressInfoWindows: true,
+    styles: [{
+      polygonOptions: {
+        fillColor: '#FFFFFF',
+        fillOpacity: 0.1
+      }
+    }, {
+      where: "col4 = 'Shaded X'",
+      polygonOptions: {
+        fillColor: '#FFCC00',
+		fillOpacity: 0.5
+      }
+    }, {
+      where: "col4 IN ('A','AE','AO')",
+      polygonOptions: {
+	    fillColor: '#990099',
+        fillOpacity: 0.5
+      }
+    }, {
+      where: "col4  IN ('V','VE')",
+      polygonOptions: {
+	    fillColor: '#FF6600',
+        fillOpacity: 0.5
+      }
+    }]
+  });
+  floodLayer.setMap(map);
+	
+    });
+	
+    var future_map_radioButton = document.getElementById('future_flood_map');
+
+	google.maps.event.addDomListener(future_map_radioButton, 'click', function() {
+	floodLayer.setMap(null);
+	ft_id = '1VAQD8cfVdWfb5dSkOnlvuV4nB9-cpaeWMDhXOz-R';
+     floodLayer = new google.maps.FusionTablesLayer({
+    query: {
+      select: 'col6',
+      from: ft_id
+    },
+	suppressInfoWindows: true,
+    styles: [{
+      polygonOptions: {
+        fillColor: '#FFFFFF',
+        fillOpacity: 0.1
+      }
+    }, {
+      where: "col3 = 'Shaded X'",
+      polygonOptions: {
+        fillColor: '#FFCC00',
+		fillOpacity: 0.5
+      }
+    }, {
+      where: "col3 IN ('A','AE','AO')",
+      polygonOptions: {
+	    fillColor: '#990099',
+        fillOpacity: 0.5
+      }
+    }, {
+      where: "col3  IN ('V','VE')",
+      polygonOptions: {
+	    fillColor: '#FF6600',
+        fillOpacity: 0.5
+      }
+    }]
+  });
+
+  floodLayer.setMap(map);
+	
+	});
+  
+ 
+/**
+The code that handles the search box was found at the following site:
+https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
+Portions of this page are reproduced from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License. 
+**/
+
+ // Create the search box and link it to the UI element.
+  var input = /** @type {HTMLInputElement} */(
+      document.getElementById('pac-input'));
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  var searchBox = new google.maps.places.SearchBox(
+    /** @type {HTMLInputElement} */(input));
+
+  // [START region_getplaces]
+  // Listen for the event fired when the user selects an item from the
+  // pick list. Retrieve the matching places for that item.
+  google.maps.event.addListener(searchBox, 'places_changed', function() {
+    var places = searchBox.getPlaces();
+
+    for (var i = 0, marker; marker = markers[i]; i++) {
+      marker.setMap(null);
+    }
+
+    // For each place, get the icon, place name, and location.
+    markers = [];
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0, place; place = places[i]; i++) {
+      var image = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+
+      // Create a marker for each place.
+      var marker = new google.maps.Marker({
+        map: map,
+        icon: image,
+        title: place.name,
+        position: place.geometry.location
+      });
+	  
+	 
+
+      markers.push(marker);
+	  
+	elevator = new google.maps.ElevationService();
+var locations = [];
+  var clickedLocation = marker.getPosition();
+  locations.push(clickedLocation);
+  
+ var positionalRequest = {
+   'locations': locations
+ }
+xmlhttp=new XMLHttpRequest();
+/*xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/BK.csv",false);
+xmlhttp.onreadystatechange=function() 
+{
+  if(xmlhttp.readyState==4)
+    alert("status " + xmlhttp.status);
+}
+xmlhttp.send();
+*/
+
+
+if(input.value.indexOf("Brooklyn") > -1)
+{
+
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/BK.csv",false);
+xmlhttp.send();
+
+}
+
+else if(input.value.indexOf("Queens") > -1)
+{
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/QN.csv",false);
+xmlhttp.send();
+
+}
+else if(input.value.indexOf("Bronx") > -1)
+{
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/BX.csv",false);
+xmlhttp.send();
+
+}
+else if(input.value.indexOf("Staten Island") > -1)
+{
+
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/SI.csv",false);
+xmlhttp.send();
+
+}
+
+else 
+{
+
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/MN.csv",false);
+xmlhttp.send();
+
+}
+
+var xmlDoc = "";
+
+xmlDoc=xmlhttp.responseText;
+
+
+var lines = xmlDoc.split(/[\r\n|\n]+/);    // split data by line
+var street = [];
+var year_built_arr = [];
+var year_built = "Not Available";
+var year_found=false;
+input.value = input.value.toUpperCase();
+
+for(j=0;j<= lines.length;j++) {
+		var pattern = new RegExp("[A-Z]");
+		
+		if(pattern.test(lines[j]))
+			{		
+				tmp_arr = lines[j].split(/,/);
+				street[j] = tmp_arr[0];
+				year_built_arr[j] = tmp_arr[1];
+				
+				 if(input.value.indexOf(street[j]) > -1)
+				{
+					year_found=true;
+					year_built = year_built_arr[j];
+					break;
+					
+			}
+			}
+
+}
+
+
+
+
+
+
+elevator.getElevationForLocations(positionalRequest, function(results, status) {
+   if (status == google.maps.ElevationStatus.OK) {
+
+      
+     if (results[0]) {
+
+       /*
+        infowindow.setContent("<p> The Base Flood Elevation is approx. " + Math.round((Math.round(results[0].elevation) * 3.28084))+ " feet."+
+		"<br/>" +" Year house was approx. built: " + year_built	+
+		"</p>");
+       */
+        
+      } else {
+        alert("No results found");
+      }
+    } else {
+      alert("Elevation service failed due to: " + status);
+    }
+	});
+	var bfe = null;
+	/*google.maps.event.addDomListener(floodLayer, 'click', function(e) {
+	  alert("flood layer latlng" + e.latLng);
+	 bfe = e.row['STATIC_BFE'].value;
+	
+	 
+	});*/
+	var request = null;
+	 gapi.client.setApiKey('AIzaSyBJHrqE-zqhiEApPUVplHxm32z14uwOKxA');
+	google.maps.event.addListener(marker, 'click', function(e) {
+	//google.maps.event.trigger(floodLayer, 'click', e);	
+	    gapi.client.load('fusiontables', 'v1', function(){
+		 request = gapi.client.fusiontables.query.sqlGet({
+          'sql': 'select static_bfe from ' + ft_id
+        });
+		
+		request.execute(function(response) {
+		var row = {};	         
+		 for (var i in response.rows) 
+		 {
+           row[i]= response.rows[i];
+			if(new google.maps.LatLng(row.latitude.value, row.longtiude.value) == e.Latlng)
+			{
+			bfe = row[i];
+			}
+		 }
+
+			});
+	});
+	infowindow.setContent("<p> The Base Flood Elevation is approx. " + bfe + " feet."+
+		"<br/>" +" Year house was approx. built: " + year_built	+
+		"</p>");
+    infowindow.open(map,marker);
+	 });
+	 
+	
+	 
+
+      bounds.extend(place.geometry.location);
+    }
+
+    map.fitBounds(bounds);
+  });
+ // Bias the SearchBox results towards places that are within the bounds of the
+  // current map's viewport.
+  google.maps.event.addListener(map, 'bounds_changed', function() {
+    var bounds = map.getBounds();
+    searchBox.setBounds(bounds);
+  });
+/***
+Here ends the Search box code
+**/
+ var high_risk = document.getElementById("high_risk");
+   var highRisk_context = high_risk.getContext("2d");
+   highRisk_context.fillStyle = "#FF6600";
+   highRisk_context.fillRect(0, 0, 10, 10);
+   
+  var mod_risk = document.getElementById("mod_risk");
+   var modRisk_context = mod_risk.getContext("2d");
+   modRisk_context.fillStyle = "#990099";
+   modRisk_context.fillRect(0, 0, 10, 10);
+   
+    var low_risk = document.getElementById("low_risk");
+   var lowRisk_context = low_risk.getContext("2d");
+   lowRisk_context.fillStyle = "#FFCC00";
+   lowRisk_context.fillRect(0, 0, 10, 10);
+
+}
+
+  google.maps.event.addDomListener(window, 'load', initialize);
+
+   
+
+
+    </script>
+	<style>
+      #target {
+        width: 345px;
+      }
+    </style>
+
+  </head>
+  <body>
+  <div id="map-selector" class="controls">
+  <input type="radio" name="type" id="current_flood_map">
+      <label for="current_flood_map">Current Flood Map</label>
+	  <input type="radio" name="type" id="future_flood_map">
+      <label for="future_flood_map">Future Flood Map</label>
+	</div>
+  <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+
+  <div id="legend" class="controls">
+ 
+
+<form>
+
+  <legend>Flood Zones</legend>
+  <canvas id="high_risk" width="10" height="10" style="border:solid 1px #FF6600;"></canvas> V/VE (High Risk) <br>
+  <canvas id="mod_risk" width="10" height="10" style="border:solid 1px #990099;"></canvas> A/AE/AO (Moderate Risk) <br>
+  <canvas id="low_risk" width="10" height="10" style="border:solid 1px #FFCC00;"></canvas> X (Low Risk) <br>
+
+
+</form>
+</div>
+   <div id="map-canvas"></div>
+   </body>
+</html>
+
