@@ -332,6 +332,10 @@ Portions of this page are reproduced from work created and shared by Google and 
 
     map.fitBounds(bounds);
 	
+	if (map.getZoom() > 15) {  
+		map.setZoom(15)
+	}
+	
 	google.maps.event.trigger(markers[0], 'click');
   });
 
