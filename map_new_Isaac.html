@@ -351,6 +351,21 @@ Portions of this page are reproduced from work created and shared by Google and 
 Here ends the Search box code
 **/
 
+ var high_risk = document.getElementById("high_risk");
+   var highRisk_context = high_risk.getContext("2d");
+   highRisk_context.fillStyle = "#FF6600";
+   highRisk_context.fillRect(0, 0, 10, 10);
+   
+  var mod_risk = document.getElementById("mod_risk");
+   var modRisk_context = mod_risk.getContext("2d");
+   modRisk_context.fillStyle = "#990099";
+   modRisk_context.fillRect(0, 0, 10, 10);
+   
+    var low_risk = document.getElementById("low_risk");
+   var lowRisk_context = low_risk.getContext("2d");
+   lowRisk_context.fillStyle = "#FFCC00";
+   lowRisk_context.fillRect(0, 0, 10, 10);
+
 }
 
 function sprintf( format ) {
