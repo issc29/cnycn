@@ -274,56 +274,92 @@ Portions of this page are reproduced from work created and shared by Google and 
 	  
      
       google.maps.event.addListener(marker, 'click', function() {
-	  //alert('a')
-	  
-	  var info = "<b>Flood Results</b><br><br>";
+	var info = "<b>Flood Results</b><br>";
+		var curr_bfe, curr_zone, fut_bfe, fut_zone, curr_ErrOutRange, fut_ErrOutRange
 		
-		var curr_bfe, curr_zone, fut_bfe, fut_zone
-		 var curr_url = sprintf(apiurl, current, 'col8', place.geometry.location.toUrlValue(6));
+		 var curr_url = sprintf(apiurl, current, 'col8', marker.getPosition().toUrlValue(6));
 		$.getJSON( curr_url, function( data ) {
-          curr_bfe  = data.rows[0][0]
+		  if ("rows" in data) { 
+		  curr_bfe  = data.rows[0][0]
 		  curr_zone = data.rows[0][1]
+		  }
+		  else {
+		  curr_ErrOutRange  = 1
+		  curr_bfe  = 0
+		  curr_zone = "No ZONE Listed"
+		  }
+          
         })
-		
+
 		.done(function() {
-			var fut_url = sprintf(apiurl, future, 'col6', place.geometry.location.toUrlValue(6));
+		//alert("a")
+			var fut_url = sprintf(apiurl, future, 'col6', marker.getPosition().toUrlValue(6));
 		    $.getJSON( fut_url, function( data ) {
 		    //alert(data.rows[0][0])
-              fut_bfe  = data.rows[0][0]
-		      fut_zone = data.rows[0][1]
+            if ("rows" in data) { 
+				fut_bfe  = data.rows[0][0]
+				fut_zone = data.rows[0][1]
+			}
+			else {
+				fut_ErrOutRange  = 1
+				fut_bfe  = 0
+				fut_zone = "No ZONE Listed"
+			}
+          
             })
 			.done(function() {
-			  info += "<b>Current Field Zone: </b>" + curr_zone + "<br>";
-		      info += "<b>Future Field Zone: </b>" + fut_zone + "<br>";
-		      
-		      //alert(url);
-	          if (curr_bfe > 0) {
-	          	info += "<b>Current Base Flood Elevation: </b>" + curr_bfe.toFixed(2) + "<br>";
-	          }
-	          else {
-	          	info += "<b>Current Base Flood Elevation:</b> NO BFE<br>"
-	          }
-		      
-		      if (fut_bfe > 0) {
-	          	info += "<b>Future Base Flood Elevation: </b>" + fut_bfe.toFixed(2) + "<br>";
-	          }
-	          else {
-	          	info += "<b>Future Base Flood Elevation:</b> NO BFE<br>"
-	          }
+			  if( curr_ErrOutRange == 1 && fut_ErrOutRange == 1 ) {
+				info += "Flood map is only available for the NYC Metro Region!<br>";
+			  }
+			  else {
+			    if (curr_bfe > 0) {
+					curr_bfe = curr_bfe.toFixed(2) + " feet"
+				}
+				else {
+					curr_bfe = "NO BFE"
+				}
+				if (fut_bfe > 0) {
+					fut_bfe = fut_bfe.toFixed(2) + " feet"
+				}
+				else {
+					fut_bfe = "NO BFE"
+				}
 			  
-			 // if(typeof(infowindow) !== 'undefined' && infowindow !== null) {
-				//infowindow.close();
-			  //}
 			  
-			 // alert(info)
-			  infowindow.setContent(info);
-			  infowindow.open(map, marker);
-			  
-			 // alert( info)
-		      		
+			    if (curr_zone != fut_zone && curr_bfe != fut_bfe) {
+				  info += "<img src='images/alert.png' height='30' style=\"vertical-align:middle;\">   Your Zone and BFE are changing!<br>";
+				  info += "<b>Current Flood Zone: </b>" + curr_zone + "<br>";
+		          info += "<b>Future Flood Zone: </b>" + fut_zone + "<br>";
+				  info += "<b>Current Base Flood Elevation: </b>" + curr_bfe + " <br>";
+				  info += "<b>Future Base Flood Elevation: </b>" + fut_bfe + " <br>";
+				}
+				else if (curr_zone != fut_zone) {
+				  info += "<img src='images/alert.png' height='30' style=\"vertical-align:middle;\">   Your Zone is changing!<br>";
+				  info += "<b>Current Flood Zone: </b>" + curr_zone + "<br>";
+		          info += "<b>Future Flood Zone: </b>" + fut_zone + "<br>";
+				  info += "<b>Base Flood Elevation: </b>" + curr_bfe + "<br>";
+				}
+				else if (curr_bfe != fut_bfe) {
+				  info += "<img src='images/alert.png' height='30' style=\"vertical-align:middle;\">   Your BFE is changing!<br>";
+				  info += "<b>Flood Zone: </b>" + curr_zone + "<br>";
+				  info += "<b>Current Base Flood Elevation: </b>" + curr_bfe + "<br>";
+				  info += "<b>Future Base Flood Elevation: </b>" + fut_bfe + "<br>";
+				}
+				else {
+					info += "<img src='images/green_checkmark.png' height='30' style=\"vertical-align:middle;\">   Your Zone and BFE will remain unchanged.<br>";
+					info += "<b>Flood Zone: </b>" + curr_zone + "<br>";
+					info += "<b>Base Flood Elevation: </b>" + curr_bfe + "<br>";
+				}
+                
+                
+			   
+			   } 
+			   infowindow.setContent(info);
+			   infowindow.open(map,marker);
+			   
+			});
+			
             })
-		
-		});
       });
       markers.push(marker);
 
@@ -332,8 +368,8 @@ Portions of this page are reproduced from work created and shared by Google and 
 
     map.fitBounds(bounds);
 	
-	if (map.getZoom() > 15) {  
-		map.setZoom(15)
+	if (map.getZoom() > 14) {  
+		map.setZoom(14)
 	}
 	
 	google.maps.event.trigger(markers[0], 'click');
