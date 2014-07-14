@@ -77,7 +77,7 @@
       }
 
     </style>
-	 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false"></script>
+	 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false&key=AIzaSyAhXLJapqOSajnZGGLNYIFJhNmLi0WpyoU"></script>
 	 <link rel="stylesheet" type="text/css" href="styles/gdropdown.css" />
     <script type="text/javascript" src="scripts/gdropdown.js"></script>
 	<script src="scripts/jquery-1.11.1.min.js"></script>
@@ -89,7 +89,8 @@
 var infowindow = new google.maps.InfoWindow();
 var current = '1e6gHMcnqnzXUBbC6HEQ1BNDCGyeN5_fY6nXvsUzl'
 var future  = '1VAQD8cfVdWfb5dSkOnlvuV4nB9-cpaeWMDhXOz-R'
-var apiurl  = 'https://www.googleapis.com/fusiontables/v1/query/?sql=SELECT%20%27STATIC_BFE%27,%27FLD_ZONE%27%20FROM%20%s%20WHERE%20ST_INTERSECTS(%s,%20CIRCLE(LATLNG(%s),1))&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ'
+var apikey = 'AIzaSyAhXLJapqOSajnZGGLNYIFJhNmLi0WpyoU'
+var apiurl  = 'https://www.googleapis.com/fusiontables/v1/query/?sql=SELECT%20%27STATIC_BFE%27,%27FLD_ZONE%27%20FROM%20%s%20WHERE%20ST_INTERSECTS(%s,%20CIRCLE(LATLNG(%s),1))&key=' + apikey
   
 
 function initialize() {
@@ -112,11 +113,10 @@ function initialize() {
   var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
   map.controls[google.maps.ControlPosition.TOP_RIGHT].push(types);
   map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(legend);
-  var ft_id = '1e6gHMcnqnzXUBbC6HEQ1BNDCGyeN5_fY6nXvsUzl';
  floodLayer  = new google.maps.FusionTablesLayer({
     query: {
       select: 'col8',
-      from: ft_id
+      from: current
     },
 	suppressInfoWindows: true,
     styles: [{
@@ -151,12 +151,11 @@ function initialize() {
     var current_map_radioButton = document.getElementById('current_flood_map');
 	
 	google.maps.event.addDomListener(current_map_radioButton, 'click', function() {
-	floodLayer.setMap(null);
-	ft_id = '1e6gHMcnqnzXUBbC6HEQ1BNDCGyeN5_fY6nXvsUzl';			
+	floodLayer.setMap(null);			
  floodLayer = new google.maps.FusionTablesLayer({
     query: {
       select: 'col8',
-      from: ft_id
+      from: current
     },
 	suppressInfoWindows: true,
     styles: [{
@@ -192,11 +191,10 @@ function initialize() {
 
 	google.maps.event.addDomListener(future_map_radioButton, 'click', function() {
 	floodLayer.setMap(null);
-	ft_id = '1VAQD8cfVdWfb5dSkOnlvuV4nB9-cpaeWMDhXOz-R';
      floodLayer = new google.maps.FusionTablesLayer({
     query: {
       select: 'col6',
-      from: ft_id
+      from: future
     },
 	suppressInfoWindows: true,
     styles: [{
@@ -274,7 +272,8 @@ Portions of this page are reproduced from work created and shared by Google and 
 	  
      
       google.maps.event.addListener(marker, 'click', function() {
-	var info = "<b>Flood Results</b><br>";
+		var info = "";
+		//var info = "<b>Flood Results</b><br>";
 		var curr_bfe, curr_zone, fut_bfe, fut_zone, curr_ErrOutRange, fut_ErrOutRange
 		
 		 var curr_url = sprintf(apiurl, current, 'col8', marker.getPosition().toUrlValue(6));
@@ -327,26 +326,26 @@ Portions of this page are reproduced from work created and shared by Google and 
 			  
 			  
 			    if (curr_zone != fut_zone && curr_bfe != fut_bfe) {
-				  info += "<img src='images/alert.png' height='30' style=\"vertical-align:middle;\">   Your Zone and BFE are changing!<br>";
+				  info += "<img src='images/alert.png' height='25' width='28.3' style=\"vertical-align:middle;\">   Your Zone and BFE are changing!<br>";
 				  info += "<b>Current Flood Zone: </b>" + curr_zone + "<br>";
 		          info += "<b>Future Flood Zone: </b>" + fut_zone + "<br>";
 				  info += "<b>Current Base Flood Elevation: </b>" + curr_bfe + " <br>";
 				  info += "<b>Future Base Flood Elevation: </b>" + fut_bfe + " <br>";
 				}
 				else if (curr_zone != fut_zone) {
-				  info += "<img src='images/alert.png' height='30' style=\"vertical-align:middle;\">   Your Zone is changing!<br>";
+				  info += "<img src='images/alert.png' height='25' width='28.3' style=\"vertical-align:middle;\">   Your Zone is changing!<br>";
 				  info += "<b>Current Flood Zone: </b>" + curr_zone + "<br>";
 		          info += "<b>Future Flood Zone: </b>" + fut_zone + "<br>";
 				  info += "<b>Base Flood Elevation: </b>" + curr_bfe + "<br>";
 				}
 				else if (curr_bfe != fut_bfe) {
-				  info += "<img src='images/alert.png' height='30' style=\"vertical-align:middle;\">   Your BFE is changing!<br>";
+				  info += "<img src='images/alert.png' height='25' width='28.3' style=\"vertical-align:middle;\">   Your BFE is changing!<br>";
 				  info += "<b>Flood Zone: </b>" + curr_zone + "<br>";
 				  info += "<b>Current Base Flood Elevation: </b>" + curr_bfe + "<br>";
 				  info += "<b>Future Base Flood Elevation: </b>" + fut_bfe + "<br>";
 				}
 				else {
-					info += "<img src='images/green_checkmark.png' height='30' style=\"vertical-align:middle;\">   Your Zone and BFE will remain unchanged.<br>";
+					info += "<img src='images/green_checkmark.png' height='25' width='20.03' style=\"vertical-align:middle;\">   Your Zone and BFE will remain unchanged.<br>";
 					info += "<b>Flood Zone: </b>" + curr_zone + "<br>";
 					info += "<b>Base Flood Elevation: </b>" + curr_bfe + "<br>";
 				}
@@ -355,6 +354,7 @@ Portions of this page are reproduced from work created and shared by Google and 
 			   
 			   } 
 			   infowindow.setContent(info);
+			   infowindow.setOptions({maxWidth:1000});
 			   infowindow.open(map,marker);
 			   
 			});
@@ -414,7 +414,8 @@ function sprintf( format ) {
 	 function windowControl(latlang, map) {
 		alert(latlang);
 		
-		var info = "<b>Flood Results</b><br><br>";
+		var info = "";
+		//var info = "<b>Flood Results</b><br><br>";
 		
 		var curr_bfe, curr_zone, fut_bfe, fut_zone
 		
