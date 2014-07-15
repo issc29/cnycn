@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <style>
+    #map-canvas { width:700px; height:600px; }
+    .layer-wizard-search-label { font-family: sans-serif };
+  </style>
+
+  <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+  <!-- Need to change jquery address -->
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script type="text/javascript">
+var map, layer;
+
+function sprintf( format ) {
+	for (var i=1; i < arguments.length; i++) {
+		format = format.replace(/%s/, arguments[i]);
+	}
+	return format;
+}
+
+function initialize() {
+
+  var flood   = new google.maps.LatLng(40.601957893890386, -73.9437877237549);
+  var current = '1e6gHMcnqnzXUBbC6HEQ1BNDCGyeN5_fY6nXvsUzl'
+  var future  = '1VAQD8cfVdWfb5dSkOnlvuV4nB9-cpaeWMDhXOz-R'
+  var apiurl  = 'https://www.googleapis.com/fusiontables/v1/query/?sql=SELECT%20%27STATIC_BFE%27,%27FLD_ZONE%27%20FROM%20%s%20WHERE%20ST_INTERSECTS(%s,%20CIRCLE(LATLNG(%s),1))&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ'
+  var infowindow = null
+
+  map = new google.maps.Map(document.getElementById('map-canvas'), {
+    center: flood,
+    zoom: 11
+  });
+
+  layer = new google.maps.FusionTablesLayer({
+    suppressInfoWindows:true,
+    query: {
+      select: 'col8',
+      from: '1e6gHMcnqnzXUBbC6HEQ1BNDCGyeN5_fY6nXvsUzl'
+    },
+    styles: [{
+      polygonOptions: {
+        fillColor: '#FFFFFF',
+        fillOpacity: 0.1
+      }
+    }, {
+      where: "col4 = 'Shaded X'",
+      polygonOptions: {
+        fillColor: '#FFCC00',
+		fillOpacity: 0.5
+      }
+    }, {
+      where: "col4 IN ('A','AE','AO')",
+      polygonOptions: {
+	    fillColor: '#990099',
+        fillOpacity: 0.5
+      }
+    }, {
+      where: "col4  IN ('V','VE')",
+      polygonOptions: {
+	    fillColor: '#FF6600',
+        fillOpacity: 0.5
+      }
+    }]
+  });
+  
+  
+		  google.maps.event.addListener(layer, 'click', function(e) {
+		 windowControl(e,  map)
+	  });
+	  google.maps.event.addListener(map, 'click', function(e) {
+		 windowControl(e, map)
+	  });
+	  
+	 function windowControl(e, map) {
+		//alert(e.latLng.toUrlValue(6));
+		
+		var info = "<b>Flood Results</b><br><br>";
+		
+		var curr_bfe, curr_zone, fut_bfe, fut_zone
+		
+		var curr_url = sprintf(apiurl, current, 'col8', e.latLng.toUrlValue(6));
+		$.getJSON( curr_url, function( data ) {
+          curr_bfe  = data.rows[0][0]
+		  curr_zone = data.rows[0][1]
+        })
+		
+		.done(function() {
+			var fut_url = sprintf(apiurl, future, 'col6', e.latLng.toUrlValue(6));
+		    $.getJSON( fut_url, function( data ) {
+		    //alert(data.rows[0][0])
+              fut_bfe  = data.rows[0][0]
+		      fut_zone = data.rows[0][1]
+            })
+			.done(function() {
+			  info += "<b>Current Field Zone: </b>" + curr_zone + "<br>";
+		      info += "<b>Future Field Zone: </b>" + fut_zone + "<br>";
+		      
+		      //alert(url);
+	          if (curr_bfe > 0) {
+	          	info += "<b>Current Base Flood Elevation: </b>" + curr_bfe.toFixed(2) + "<br>";
+	          }
+	          else {
+	          	info += "<b>Current Base Flood Elevation:</b> NO BFE<br>"
+	          }
+		      
+		      if (fut_bfe > 0) {
+	          	info += "<b>Future Base Flood Elevation: </b>" + fut_bfe.toFixed(2) + "<br>";
+	          }
+	          else {
+	          	info += "<b>Future Base Flood Elevation:</b> NO BFE<br>"
+	          }
+			  
+			  if(typeof(infowindow) !== 'undefined' && infowindow !== null) {
+				infowindow.close();
+			  }
+			  
+			  infowindow = new google.maps.InfoWindow({
+				content: info,
+				position: e.latLng
+			  });
+			  infowindow.open(map);
+			  
+			 // alert( info)
+		      		
+            })
+		
+		});
+		
+		
+		
+
+		
+		//alert(fut_bfe)
+		
+
+	};
+	
+	  layer.setMap(map);
+
+
+  
+}
+
+//NEED To generate an API Key!
+//https://www.googleapis.com/fusiontables/v1/query/?sql=SELECT%20%27STATIC_BFE%27,%20%27FLD_ZONE%27%20FROM%201e6gHMcnqnzXUBbC6HEQ1BNDCGyeN5_fY6nXvsUzl%20WHERE%20ST_INTERSECTS(col8,%20CIRCLE(LATLNG(40.702646,%20-74.011990),1))&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ
+
+
+google.maps.event.addDomListener(window, 'load', initialize);
+  </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>
