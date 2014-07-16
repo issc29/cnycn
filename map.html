@@ -382,7 +382,7 @@ xmlhttp.send();
 else 
 {
 
-xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/MN.csv",true);
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/MN.csv",false);
 xmlhttp.send();
 
 }
@@ -403,7 +403,7 @@ for(j=0;j<= lines.length;j++) {
 		var pattern = new RegExp("[A-Z]");
 		
 		if(pattern.test(lines[j]))
-			{		
+			{	
 				tmp_arr = lines[j].split(/,/);
 				street[j] = tmp_arr[0];
 				year_built_arr[j] = tmp_arr[1];
@@ -564,8 +564,8 @@ function sprintf( format ) {
 <form>
 
   <legend>Flood Zones</legend>
-  <canvas id="high_risk" width="10" height="10" style="border:solid 1px #FF6600;"></canvas> V/VE (High Risk & Tidal Waves) <br>
-  <canvas id="mod_risk" width="10" height="10" style="border:solid 1px #990099;"></canvas> A/AE/AO (High Risk) <br>
+  <canvas id="high_risk" width="10" height="10" style="border:solid 1px #FF6600;"></canvas> V/VE (High Risk:Flooding & Waves) <br>
+  <canvas id="mod_risk" width="10" height="10" style="border:solid 1px #990099;"></canvas> A/AE/AO (High Risk: Flooding) <br>
   <canvas id="low_risk" width="10" height="10" style="border:solid 1px #FFCC00;"></canvas> X (Moderate Risk) <br>
 
 
