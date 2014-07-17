@@ -59,7 +59,11 @@
 		border-color: #fff;
 	  background-color: #D3D3D3;
         padding: 0 11px 0 13px;
+<<<<<<< HEAD
         width: 200px;
+=======
+        width: 225px;
+>>>>>>> cc560db6cf06c34b2fe96fd2b4ce8fd63b4ffc50
 		height: 75px;
 	  
 	  }
@@ -149,7 +153,11 @@ function initialize() {
   
   
     var current_map_radioButton = document.getElementById('current_flood_map');
+<<<<<<< HEAD
 	
+=======
+	current_map_radioButton.setAttribute('checked', true);
+>>>>>>> cc560db6cf06c34b2fe96fd2b4ce8fd63b4ffc50
 	google.maps.event.addDomListener(current_map_radioButton, 'click', function() {
 	floodLayer.setMap(null);			
  floodLayer = new google.maps.FusionTablesLayer({
@@ -349,9 +357,83 @@ Portions of this page are reproduced from work created and shared by Google and 
 					info += "<b>Flood Zone: </b>" + curr_zone + "<br>";
 					info += "<b>Base Flood Elevation: </b>" + curr_bfe + "<br>";
 				}
+<<<<<<< HEAD
                 
                 
 			   
+=======
+                xmlhttp=new XMLHttpRequest();
+
+if(input.value.indexOf("Brooklyn") > -1)
+{
+
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/BK.csv",false);
+xmlhttp.send();
+
+}
+
+else if(input.value.indexOf("Queens") > -1)
+{
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/QN.csv",false);
+xmlhttp.send();
+
+}
+else if(input.value.indexOf("Bronx") > -1)
+{
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/BX.csv",false);
+xmlhttp.send();
+
+}
+else if(input.value.indexOf("Staten Island") > -1)
+{
+
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/SI.csv",false);
+xmlhttp.send();
+
+}
+
+else 
+{
+
+xmlhttp.open("GET","https://dl.dropboxusercontent.com/u/103350284/MN.csv",false);
+xmlhttp.send();
+
+}
+
+var xmlDoc = "";
+
+xmlDoc=xmlhttp.responseText;
+
+
+var lines = xmlDoc.split(/[\r\n|\n]+/);    // split data by line
+var street = [];
+var year_built_arr = [];
+var year_built = "Not Available";
+var year_found=false;
+input.value = input.value.toUpperCase();
+
+for(j=0;j<= lines.length;j++) {
+		var pattern = new RegExp("[A-Z]");
+		
+		if(pattern.test(lines[j]))
+			{	
+				tmp_arr = lines[j].split(/,/);
+				street[j] = tmp_arr[0];
+				year_built_arr[j] = tmp_arr[1];
+				
+				 if(input.value.indexOf(street[j]) > -1)
+				{
+					year_found=true;
+					year_built = year_built_arr[j];
+					break;
+					
+			}
+			}
+
+}
+                
+			   info +=  "<b>Est. Build Date: </b>" + year_built + "<br>";
+>>>>>>> cc560db6cf06c34b2fe96fd2b4ce8fd63b4ffc50
 			   } 
 			   infowindow.setContent(info);
 			   infowindow.setOptions({maxWidth:1000});
@@ -486,9 +568,15 @@ function sprintf( format ) {
   <input type="radio" name="type" id="current_flood_map">
       <label for="current_flood_map">Current Flood Map</label>
 	  <input type="radio" name="type" id="future_flood_map">
+<<<<<<< HEAD
       <label for="future_flood_map">Future Flood Map</label>
 	</div>
   <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+=======
+      <label for="future_flood_map">2016 Flood Map</label>
+	</div>
+  <input id="pac-input" class="controls" type="text" placeholder="Enter your Address">
+>>>>>>> cc560db6cf06c34b2fe96fd2b4ce8fd63b4ffc50
 
   <div id="legend" class="controls">
  
@@ -496,9 +584,15 @@ function sprintf( format ) {
 <form>
 
   <legend>Flood Zones</legend>
+<<<<<<< HEAD
   <canvas id="high_risk" width="10" height="10" style="border:solid 1px #FF6600;"></canvas> V/VE (High Risk) <br>
   <canvas id="mod_risk" width="10" height="10" style="border:solid 1px #990099;"></canvas> A/AE/AO (Moderate Risk) <br>
   <canvas id="low_risk" width="10" height="10" style="border:solid 1px #FFCC00;"></canvas> X (Low Risk) <br>
+=======
+  <canvas id="high_risk" width="10" height="10" style="border:solid 1px #FF6600;"></canvas> V/VE (High Risk:Flooding & Waves) <br>
+  <canvas id="mod_risk" width="10" height="10" style="border:solid 1px #990099;"></canvas> A/AE/AO (High Risk: Flooding) <br>
+  <canvas id="low_risk" width="10" height="10" style="border:solid 1px #FFCC00;"></canvas> X (Moderate Risk) <br>
+>>>>>>> cc560db6cf06c34b2fe96fd2b4ce8fd63b4ffc50
 
 
 </form>
