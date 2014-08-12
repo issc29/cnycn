@@ -9,7 +9,7 @@
 
     <link rel="stylesheet" type="text/css" href="./wp-content/themes/floodhelpny-wp/library/css/gdropdown.css" />
     <link rel="stylesheet" type="text/css" href="./wp-content/themes/floodhelpny-wp/library/css/map.css" />
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css"/>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
 
 
     <script type="text/javascript" src="./wp-content/themes/floodhelpny-wp/library/js/gdropdown.js"></script>
@@ -17,30 +17,37 @@
     <script src="https://apis.google.com/js/client.js?onload=load"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false&key=AIzaSyAhXLJapqOSajnZGGLNYIFJhNmLi0WpyoU"></script>
 
-	<style>
-		.change {
-			margin: 8px 0 10px;
-			display: none;
-			color: #6dbfe6; }
-		.change .icon-change {
-			display: inline-block;
-			vertical-align: top;
-			-webkit-border-radius: 20px;
-			-moz-border-radius: 20px;
-			border-radius: 20px;
-			background: #6dbfe6 none no-repeat center center;
-			height: 20px;
-			width: 20px;
-			margin-right: 6px; }
-		.ie-7 .change .icon-change {
-			display: inline; }
-		.change.changing, .change.not {
-			display: block; }
-		.change.changing .icon-change {
-			background-image: url("./wp-content/themes/floodhelpny-wp/library/images/icon-changing.png"); }
-		.change.not .icon-change {
-			background-image: url("./wp-content/themes/floodhelpny-wp/library/images/icon-notchanging.png"); }
-	</style>	
+    <style>
+        .change {
+            margin: 8px 0 10px;
+            display: none;
+            color: #6dbfe6;
+        }
+        .change .icon-change {
+            display: inline-block;
+            vertical-align: top;
+            -webkit-border-radius: 20px;
+            -moz-border-radius: 20px;
+            border-radius: 20px;
+            background: #6dbfe6 none no-repeat center center;
+            height: 20px;
+            width: 20px;
+            margin-right: 6px;
+        }
+        .ie-7 .change .icon-change {
+            display: inline;
+        }
+        .change.changing,
+        .change.not {
+            display: block;
+        }
+        .change.changing .icon-change {
+            background-image: url("./wp-content/themes/floodhelpny-wp/library/images/icon-changing.png");
+        }
+        .change.not .icon-change {
+            background-image: url("./wp-content/themes/floodhelpny-wp/library/images/icon-notchanging.png");
+        }
+    </style>
     <script>
         var initialExplanatoryText = '<p>Enter your address above to find out your current flood zone and base flood elevation, and your future flood zone and base flood elevation. Then find out what you need to do to protect your home from future flooding.</p>';
         var resultsExplanatoryText = '<p><strong>What do my results mean?</strong></p><p>Answer just a few more questions about your home and we can tell you more about your flood risk and ways to protect your home from future flooding. We’ll also be able to email you a summary of your results. Click the arrow to continue.</p>';
@@ -88,72 +95,91 @@
             var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
             map.controls[google.maps.ControlPosition.TOP_RIGHT].push(types);
             map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
-			floodLayer = new google.maps.FusionTablesLayer({
-                    query: {
-                        select: 'col6',
-                        from: future
-                    },
-                    suppressInfoWindows: true,
-                    styles: [{
-                        polygonOptions: {
-                            fillColor: '#FFFFFF',
-                            fillOpacity: 0.1
-                        }
-                    }, {
-                        where: "col3 = 'Shaded X'",
-                        polygonOptions: {
-                            fillColor: '#FFD700',
-                            fillOpacity: 0.8
-                        }
-                    }, {
-                        where: "col3 IN ('A','AE','AO')",
-                        polygonOptions: {
-                            fillColor: '#9932CC',
-                            fillOpacity: 0.8
-                        }
-                    }, {
-                        where: "col3  IN ('V','VE')",
-                        polygonOptions: {
-                            fillColor: '#FF8C00',
-                            fillOpacity: 0.8
-                        }
-                    }]
-                });
+            floodLayer = new google.maps.FusionTablesLayer({
+                query: {
+                    select: 'col6',
+                    from: future,
+                    where: 'col3 NOT IN (\'Unshaded X\', \'Open Water\')'
+
+                },
+                suppressInfoWindows: true,
+                styles: [{
+                    polygonOptions: {
+                        fillColor: '#FFFFFF',
+                        strokeColor: '#646464',
+                        strokeWeight: 1,
+                        fillOpacity: 0.1
+                    }
+                }, {
+                    where: "col3 = 'Shaded X'",
+                    polygonOptions: {
+                        fillColor: '#FFD700',
+                        strokeColor: '#646464',
+                        strokeWeight: 1,
+                        fillOpacity: 0.8
+                    }
+                }, {
+                    where: "col3 IN ('A','AE','AO')",
+                    polygonOptions: {
+                        fillColor: '#9932CC',
+                        strokeColor: '#646464',
+                        strokeWeight: 1,
+                        fillOpacity: 0.8
+                    }
+                }, {
+                    where: "col3  IN ('V','VE')",
+                    polygonOptions: {
+                        fillColor: '#FF8C00',
+                        strokeColor: '#646464',
+                        strokeWeight: 1,
+                        fillOpacity: 0.8
+                    }
+                }]
+            });
 
             floodLayer.setMap(map);
 
 
             var current_map_radioButton = document.getElementById('current_flood_map');
-   
+
             google.maps.event.addDomListener(current_map_radioButton, 'click', function() {
                 floodLayer.setMap(null);
                 floodLayer = new google.maps.FusionTablesLayer({
                     query: {
                         select: 'col8',
-                        from: current
+                        from: current,
+                        where: 'col4 NOT IN (\'Unshaded X\', \'OPEN WATER\')'
                     },
                     suppressInfoWindows: true,
                     styles: [{
                         polygonOptions: {
                             fillColor: '#FFFFFF',
+                            strokeColor: '#646464',
+                            strokeWeight: 1,
                             fillOpacity: 0.1
                         }
                     }, {
                         where: "col4 = 'Shaded X'",
                         polygonOptions: {
                             fillColor: '#FFD700',
+                            strokeColor: '#646464',
+                            strokeWeight: 1,
                             fillOpacity: 0.8
                         }
                     }, {
                         where: "col4 IN ('A','AE','AO')",
                         polygonOptions: {
                             fillColor: '#9932CC',
+                            strokeColor: '#646464',
+                            strokeWeight: 1,
                             fillOpacity: 0.8
                         }
                     }, {
                         where: "col4  IN ('V','VE')",
                         polygonOptions: {
                             fillColor: '#FF8C00',
+                            strokeColor: '#646464',
+                            strokeWeight: 1,
                             fillOpacity: 0.8
                         }
                     }]
@@ -169,30 +195,40 @@
                 floodLayer = new google.maps.FusionTablesLayer({
                     query: {
                         select: 'col6',
-                        from: future
+                        from: future,
+                        where: 'col3 NOT IN (\'Unshaded X\', \'Open Water\')'
+
                     },
                     suppressInfoWindows: true,
                     styles: [{
                         polygonOptions: {
                             fillColor: '#FFFFFF',
+                            strokeColor: '#646464',
+                            strokeWeight: 1,
                             fillOpacity: 0.1
                         }
                     }, {
                         where: "col3 = 'Shaded X'",
                         polygonOptions: {
                             fillColor: '#FFD700',
+                            strokeColor: '#646464',
+                            strokeWeight: 1,
                             fillOpacity: 0.8
                         }
                     }, {
                         where: "col3 IN ('A','AE','AO')",
                         polygonOptions: {
                             fillColor: '#9932CC',
+                            strokeColor: '#646464',
+                            strokeWeight: 1,
                             fillOpacity: 0.8
                         }
                     }, {
                         where: "col3  IN ('V','VE')",
                         polygonOptions: {
                             fillColor: '#FF8C00',
+                            strokeColor: '#646464',
+                            strokeWeight: 1,
                             fillOpacity: 0.8
                         }
                     }]
@@ -217,6 +253,7 @@
             var searchBox = new google.maps.places.SearchBox(
                 /** @type {HTMLInputElement} */
                 (input));
+            var place_address = ''
 
 
             // [START region_getplaces]
@@ -243,27 +280,23 @@
                     // Create a marker for each place.
                     var marker = new google.maps.Marker({
                         map: map,
-
-                        title: place.name,
+                        title: place.formatted_address,
                         position: place.geometry.location
                     });
 
                     // ADD TO DATABASE
                     var post_data = "formatted_address=" + place.formatted_address + "&latitude=" + place.geometry.location.lat() + "&longitude=" + place.geometry.location.lng();
                     console.log(post_data);
-					var db_url= "./wp-content/themes/floodhelpny-wp/stat_tracking.php"
-					$.post(db_url, post_data)
-                 //  var xhr = new XMLHttpRequest();
-                  //  xhr.open("POST", "./wp-content/themes/floodhelpny-wp/stat_tracking.php");
-                   // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                   // xhr.send(post_data);
-					
+                    var db_url = "./wp-content/themes/floodhelpny-wp/stat_tracking.php"
+                    $.post(db_url, post_data)
+
 
                     google.maps.event.addListener(marker, 'click', function() {
                         var info = "";
                         var year_built = "N/A";
                         var curr_bfe, curr_zone, fut_bfe, fut_zone, curr_ErrOutRange, fut_ErrOutRange
                         var curr_url = sprintf(apiurl, current, 'col8', marker.getPosition().toUrlValue(6));
+                        place_address = marker.getTitle();
                         $.getJSON(curr_url, function(data) {
                             if ("rows" in data) {
                                 curr_bfe = data.rows[0][0]
@@ -292,7 +325,9 @@
                                 })
                                 .done(function() {
                                     if (curr_ErrOutRange == 1 && fut_ErrOutRange == 1) {
-                                        info += "Flood map is only available for the NYC Metro Region!<br>";
+										var outOfRange = "Flood map is only available for the NYC Metro Region!"
+                                        info += outOfRange + "<br>";
+										infowindow.setContent("<p><strong>" + place_address + "</strong></p><p>" + outOfRange + "</p>");
                                     } else {
                                         if (curr_bfe > 0) {
                                             curr_bfe = curr_bfe.toFixed(0) + " feet"
@@ -304,105 +339,105 @@
                                         } else {
                                             fut_bfe = "N/A"
                                         }
-										
-										if (curr_zone == "Unshaded X") {
+
+                                        if (curr_zone == "Unshaded X") {
                                             curr_zone = "N/A"
-                                        } 
-										if (fut_zone == "Unshaded X") {
+                                        }
+                                        if (fut_zone == "Unshaded X") {
                                             fut_zone = "N/A"
-										}
-                                       
+                                        }
+
 
                                         var zone_change, BFE_change = false
                                         var change_text = ""
-                                        //if (curr_zone != fut_zone && curr_bfe != fut_bfe) {
-                                        //    zone_change = true
-                                        //    BFE_change = true
-                                        //    change_text = "Your Zone and BFE are changing!"
-                                        //} 
+                                            //if (curr_zone != fut_zone && curr_bfe != fut_bfe) {
+                                            //    zone_change = true
+                                            //    BFE_change = true
+                                            //    change_text = "Your Zone and BFE are changing!"
+                                            //} 
                                         if (curr_zone != fut_zone) {
                                             zone_change = true
                                             change_text = "Your zone is changing!"
                                         } else if (curr_bfe < fut_bfe) {
-                                            change_text = "Your zone is not changing, but your base flood"+
-                                            "elevation is increasing!"
+                                            change_text = "Your zone is not changing, but your base flood" +
+                                                "elevation is increasing!"
                                             BFE_change = true
-										} else if (curr_bfe > fut_bfe) {
-                                            change_text = "Your zone is not changing, but your base flood"+
-                                            "elevation is decreasing!"
+                                        } else if (curr_bfe > fut_bfe) {
+                                            change_text = "Your zone is not changing, but your base flood" +
+                                                "elevation is decreasing!"
                                             BFE_change = true
                                         } else {
                                             change_text = "Your zone is not changing."
                                         }
 
                                         info += "<p><strong>Your Results</strong></p>"
-										info += "<p class=\"address\">" + input.value + "</p>"
-										
-										
+                                        info += "<p class=\"address\">" + place_address + "</p>"
+
+
                                         if (zone_change || BFE_change) {
-											info += "<p class=\"change changing\"><span class=\"icon-change icon-changing\"></span>" + change_text + "</p>"
-										
-                                        } else {
-											info += "<p class=\"change not\"><span class=\"icon-change icon-changing\"></span>" + change_text + "</p>"
-										
-										}
-										info += "<ul>"
-                                        info += "<li><strong>Flood Zone Today: </strong>" + curr_zone + "</li>";
-                                        info += "<li><strong>BFE Today: </strong>" + curr_bfe + "</li>";
-										info += "<li><strong>Flood Zone 2016: </strong>" + fut_zone + "</li>";
-                                        info += "<li><strong>BFE 2016: </strong>" + fut_bfe + "</li>";
-                                        							
-										
-										var street_name = input.value.split(",")[0].toUpperCase();
-                                        var db_url = "";
-                                        
-                                        if (input.value.indexOf("Brooklyn") > -1) {
-										 db_url= "./wp-content/themes/floodhelpny-wp/brooklyn.php";
-
-                                        } else if (input.value.indexOf("Queens") > -1) {
-                                           db_url= "./wp-content/themes/floodhelpny-wp/queens.php";
-                                            
-                                        } else if (input.value.indexOf("Bronx") > -1) {
-                                            db_url= "./wp-content/themes/floodhelpny-wp/bronx.php";
-                                          
-                                        } else if (input.value.indexOf("Staten Island") > -1) {
-											db_url= "./wp-content/themes/floodhelpny-wp/staten_island.php";
+                                            info += "<p class=\"change changing\"><span class=\"icon-change icon-changing\"></span>" + change_text + "</p>"
 
                                         } else {
-											db_url= "./wp-content/themes/floodhelpny-wp/manhattan.php";
-                                           
+                                            info += "<p class=\"change not\"><span class=\"icon-change icon-changing\"></span>" + change_text + "</p>"
 
                                         }
-										
-                                      
-                                        
+                                        info += "<ul>"
+                                        info += "<li><strong>Flood Zone Today: </strong>" + curr_zone + "</li>";
+                                        info += "<li><strong>BFE Today: </strong>" + curr_bfe + "</li>";
+                                        info += "<li><strong>Flood Zone 2016: </strong>" + fut_zone + "</li>";
+                                        info += "<li><strong>BFE 2016: </strong>" + fut_bfe + "</li>";
+
+
+                                        var street_name = place_address.split(",")[0].toUpperCase();
+                                        var db_url = "";
+
+                                        if (place_address.indexOf("Brooklyn") > -1) {
+                                            db_url = "./wp-content/themes/floodhelpny-wp/brooklyn.php";
+
+                                        } else if (place_address.indexOf("Queens") > -1) {
+                                            db_url = "./wp-content/themes/floodhelpny-wp/queens.php";
+
+                                        } else if (place_address.indexOf("Bronx") > -1) {
+                                            db_url = "./wp-content/themes/floodhelpny-wp/bronx.php";
+
+                                        } else if (place_address.indexOf("Staten Island") > -1) {
+                                            db_url = "./wp-content/themes/floodhelpny-wp/staten_island.php";
+
+                                        } else {
+                                            db_url = "./wp-content/themes/floodhelpny-wp/manhattan.php";
+
+
+                                        }
+
+
+
                                         $.ajax({
-        								url: db_url,
-        								type: 'get',
-                                            data: {street_names : street_name },
-        								dataType: 'text',
-        								async: false,
-        								success: function(data) {
-            									year_built = data;	
-        										} 
-									     });
-									if(year_built == "")
-                                    {
-                                        year_built="N/A";
-                                    }
-                                        
-                                        
+                                            url: db_url,
+                                            type: 'get',
+                                            data: {
+                                                street_names: street_name
+                                            },
+                                            dataType: 'text',
+                                            async: false,
+                                            success: function(data) {
+                                                year_built = data;
+                                            }
+                                        });
+                                        if (year_built == "") {
+                                            year_built = "N/A";
+                                        }
                                         info += "<li><strong>Approx. Build Date: </strong>" + year_built + "<li>";
+                                        info += "</ul>"
 										
-										
-										info += "</ul>"
-
-
-
+										if (zone_change || BFE_change) {
+											infowindow.setContent("<p><strong>" + place_address + "</strong></p><p class=\"change changing\"><span class=\"icon-change icon-changing\"></span>" + change_text + "</p>");
+										} else {
+											infowindow.setContent("<p><strong>" + place_address + "</strong></p><p class=\"change not\"><span class=\"icon-change icon-changing\"></span>" + change_text + "</p>");
+										}
                                     }
 
 
-                                    updateResults(curr_zone, curr_bfe, fut_zone, fut_bfe, year_built, input.value, info);
+                                    updateResults(curr_zone, curr_bfe, fut_zone, fut_bfe, year_built, place_address, info);
                                     $('#addressSearchForm').find('.form-results').show();
                                     $('#addressSearchForm').find(':button').show();
 
@@ -429,16 +464,11 @@
 
                                     });
 
-                                    if (zone_change || BFE_change) {
-                                        infowindow.setContent("<p><strong>" + input.value + "</strong></p><p class=\"change changing\"><span class=\"icon-change icon-changing\"></span>" + change_text + "</p>");
-
-                                    } else {
-                                        infowindow.setContent("<p><strong>" + input.value + "</strong></p><p class=\"change not\"><span class=\"icon-change icon-changing\"></span>" + change_text + "</p>");
-                                    }
+         
 
                                     infowindow.setOptions({
                                         maxWidth: 1000
-                                        
+
                                     });
                                     infowindow.open(map, marker);
 
