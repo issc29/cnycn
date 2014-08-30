@@ -1,0 +1,11 @@
+@mixin transitions($attribute: all, $time: 0.1s, $easing: ease-out) {
+  -webkit-transition: $attribute $time $easing;
+  -moz-transition: $attribute $time $easing;
+  -o-transition: $attribute $time $easing;
+  -ms-transition: $attribute $time $easing;
+  transition: $attribute $time $easing; }
+@mixin transition-delay($time: 1s) {
+  transition-delay: $time;
+  -moz-transition-delay: $time;
+  -webkit-transition-delay: $time;
+  -o-transition-delay: $time; }

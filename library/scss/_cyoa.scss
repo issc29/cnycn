@@ -1,0 +1,31 @@
+#content {
+
+  //#questions1 { padding-bottom:30px; }
+  //#questions2 { padding-bottom:50px; }
+  .q {
+    display:none;
+    padding:20px 0;
+    &.q-first { display:block; }
+    &.box-current { margin-top:20px; padding:1em 2em; } }
+  .q-buttons { text-align:center; }
+  .q-button {
+    @include inline-block;
+    @include border-radius(4px);
+    background:$eggshell;
+    color:#fff;
+    padding:4px 10px;
+    margin:5px 10px 0 0;
+    //border:2px solid #fff;
+    &:hover,&.selected { color:#fff; background:$blue; }
+    //&.selected { border-color:$sand; }
+  }
+
+  // Email results form
+  #cyoa-email {
+    display:none;
+    width:250px;
+    margin:-20px auto 80px;
+  }
+  #cyoa-email-sent { text-align:center; padding:0 40px 50px; }
+
+}

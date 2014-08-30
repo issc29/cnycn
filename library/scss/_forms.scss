@@ -1,0 +1,66 @@
+// Forms
+form {
+  position:relative;
+
+  // Honeypots
+  .input-hidden { position:absolute; top:-999999px; }
+
+  .input-text,
+  textarea {
+    display:block;
+    border:1px solid #c6c6c6;
+    font:bold 14px/20px $mont;
+    color:lighten($slate,23%);
+    @include border-radius(10px);
+    width:220px;
+    padding:6px 10px;
+    outline:0;
+    &:focus {
+      border-color:$eggshell;
+      color:$slate;
+      outline:0; }
+    &.error { border-color:red; }
+  }
+
+  label.error {
+    font-size:12px;
+    font-weight:normal;
+    padding-left:14px;
+    color:red; }
+
+  .submit {
+    display:block;
+    width:242px;
+    padding:9px 0;
+    margin:10px 0 0 0;
+    border:none;
+    text-align:center;
+    background:$eggshell;
+    font:bold 14px/14px $mont;
+    text-transform:uppercase;
+    color:$white;
+    cursor:pointer;
+    @include border-radius(10px);
+    &:hover { background:$blue; }
+    &.clear { background:#bbb; }
+  }
+
+
+  // Specials for the map form
+  .label-address {
+    position:relative;
+    display:block;
+    padding-right:10px;
+    strong { display:block; padding-left:4px; color:$blue; font-size:18px; line-height:34px; }
+    &:after {
+      content:'';
+      display:block;
+      height:24px;
+      width:25px;
+      position:absolute;
+      top:39px;
+      right:7px;
+      background:transparent url('../images/home-search.png') no-repeat right center; }
+    //.input-address { width:223px; }
+  }
+}

@@ -1,0 +1,19 @@
+// Typography
+
+em { font-style: italic; }
+strong { font-weight: bold; }
+small { font-size: 75%; }
+
+h1 { font:bold 18px/24px $mont; color:$blue; }
+
+p,li { margin:1em 0; }
+ul li { list-style-type:disc; }
+ol li { list-style-type:decimal; }
+ul,ol { margin-left:2em; }
+
+small { font-size:11px; }
+
+// Links
+a { color: $eggshell; text-decoration:none; outline: 0; cursor:pointer; }
+a:hover, a:focus { color:$blue; text-decoration:none; }
+p a, p a:visited { line-height: inherit; }
