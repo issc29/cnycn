@@ -447,7 +447,7 @@ form {
     top: -999999px; }
   form .input-text,
   form textarea {
-    display: block;
+    display: inline-block;
     border: 1px solid #c6c6c6;
     font: bold 14px/20px Montserrat, Arial, sans-serif;
     color: #9e9fa1;
@@ -500,8 +500,8 @@ form {
       background: #bbb; }
   form .submitbutton {
     display: inline-block;
-     #width: 70px;
-      width: 25%;
+     width: 70px;
+     #width: 25%;
      height: 35px;
     padding: 9px 0;
     border: none;
@@ -511,6 +511,7 @@ form {
     text-transform: uppercase;
     color: white;
     cursor: pointer;
+	margin-left: 5px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px; }
