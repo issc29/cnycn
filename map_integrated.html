@@ -58,6 +58,7 @@
 
         var map;
         var markers = [];
+		var nyc = new google.maps.LatLng(40.7789, -73.9675);
         var bounds;
         var infowindow = new google.maps.InfoWindow();
 		var input;
@@ -159,9 +160,19 @@
 
         function initialize() {
 
-            // Variables and Object creation
+            // Set HTML elemts
             $('#map-explanation').html(initialExplanatoryText);
-            var nyc = new google.maps.LatLng(40.7789, -73.9675);
+			$('#map-selector').append('<div><input type="radio" name="type" id="current_flood_map"/><span>Flood Insurance Map Today</span></div>');
+			$('#map-selector').append('<div><input type="radio" name="type" id="future_flood_map"/><span>Flood Insurance Map in 2016</span></div>');
+			
+			$('#legend').append('<legend>Flood Zones</legend>');
+			$('#legend').append('<canvas id="high_risk_and_waves" width="10" height="10" style="border:solid 1px #FF8C00;"></canvas> &nbsp V/VE (High Risk:Flooding & Waves)<br>');
+			$('#legend').append('<canvas id="high_risk" width="10" height="10" style="border:solid 1px #9932CC;"></canvas> &nbsp A/AE/AO (High Risk: Flooding)<br>');
+			$('#legend').append('<canvas id="mod_risk" width="10" height="10" style="border:solid 1px #FFD700;"></canvas> &nbsp X (Moderate Risk)<br>');
+			
+			
+			
+			// Variables and Object creation
             var mapOptions = {
                 zoom: 11,
                 center: nyc,
@@ -282,6 +293,7 @@
 
                 // For each place, get the icon, place name, and location.
                     markers = [];
+					bounds = new google.maps.LatLngBounds();
                 for (var i = 0; i < places.length; i++) {
                     addPlace(places[i]);
                 }
@@ -327,26 +339,39 @@
 		
 		function addPlaceFromButton(address) {
 			geocoder = new google.maps.Geocoder();
-			var nyc = new google.maps.LatLng(40.7789, -73.9675);
-			geocoder.geocode({'address': address, 'latLng': nyc}, function(results, status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					var place = results[0]
-					if (place) {
+			var nyc_sw = new google.maps.LatLng(40.475419, -74.306030);
+			var nyc_ne = new google.maps.LatLng(40.971084, -73.714142);
+			var nycbounds = new google.maps.LatLngBounds(nyc_sw, nyc_ne);
+		
+
+            var request = {
+              'bounds': nycbounds,
+              'query': address
+            };
+            
+            service = new google.maps.places.PlacesService(map);
+            service.textSearch(request,  function(places, status) {
+				if (status == google.maps.places.PlacesServiceStatus.OK) {
 						for (var i = 0; i < markers.length; i++) {
 							markers[i].setMap(null);
 						}
 						markers = [];
+						bounds = new google.maps.LatLngBounds();
+				
+					for (var i = 0; i < places.length; i++) {
 						
-						addPlace(place);
+						addPlace(places[i]);
 						map.fitBounds(bounds);
+					}
 					
 						if (map.getZoom() > 14) {
 							map.setZoom(14)
 						}
 					
 						google.maps.event.trigger(markers[0], 'click');
-					}
-				} 
+				}
+                 
+
 			});
 		}
 		
@@ -360,13 +385,15 @@
 							markers[i].setMap(null);
 						}
 						markers = [];
+						bounds = new google.maps.LatLngBounds();
 						
 						addPlace(place);
-						map.fitBounds(bounds);
+						//map.fitBounds(bounds);
 					
-						if (map.getZoom() > 14) {
+						/*if (map.getZoom() > 14) {
 							map.setZoom(14)
 						}
+						*/
 					
 						google.maps.event.trigger(markers[0], 'click');
 					}

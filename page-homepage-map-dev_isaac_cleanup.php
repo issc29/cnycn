@@ -1,6 +1,6 @@
 <?php
 /*
- Template Name: Homepage-Map-Dev-isaac
+ Template Name: Homepage-Map-Dev-isaac-cleanup
  *
  * This is your custom page template. You can create as many of these as you need.
  * Simply name is "page-whatever.php" and in add the "Template Name" title at the
@@ -33,8 +33,9 @@
             <form action="#" id="addressSearchForm">
             	<div class="form-elements">
             	  <label class="label-address"><strong>Get Started</strong>
- <input id="pac-input" class="input-address input-text" type="text" placeholder="Enter your Address"></label>
- <input id="submitbutton" class="submitbutton" value="Search" />
+ <input id="pac-input" class="input-address input-text" type="text" placeholder="Enter your Address">
+  <input id="submitbutton" class="submitbutton" value="Search" /></label>
+
 
               </div>
               <div class="form-results"></div>
