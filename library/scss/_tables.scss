@@ -1,0 +1,26 @@
+.table {
+  margin:0 0 10px 0;
+  width:100%;
+  th,td {
+    font-size:11px;
+    text-align:center;
+    border-bottom:1px solid #e7f4fc;
+    border-left:1px solid #e7f4fc;
+    width:25%;
+    padding:2px 0;
+    vertical-align:middle;
+    &:first-child { border-left:none; }
+    &.double { width:50%; } }
+  .heading1 {
+    background:$eggshell;
+    color:#fff;
+    font-size:14px;
+    font-weight:bold; }
+  .heading2 {
+    color:$eggshell;
+    font-weight:bold;
+    text-transform:uppercase; }
+  .heading3 {
+    color:$eggshell;  }
+  .even td { background:#e7f4fc; }
+}
