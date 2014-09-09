@@ -7,13 +7,6 @@
     <meta charset="utf-8">
     <title>CNYCN</title>
 
-    <link rel="stylesheet" type="text/css" href="./wp-content/themes/floodhelpny-wp/library/css/gdropdown.css" />
-    <link rel="stylesheet" type="text/css" href="./wp-content/themes/floodhelpny-wp/library/css/map.css" />
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
-
-
-    <script type="text/javascript" src="./wp-content/themes/floodhelpny-wp/library/js/gdropdown.js"></script>
-    <!--<script src="https://db.tt/NNuLn8RT"></script>-->
     <script src="https://apis.google.com/js/client.js?onload=load"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&sensor=false&key=AIzaSyAhXLJapqOSajnZGGLNYIFJhNmLi0WpyoU"></script>
 
@@ -166,7 +159,7 @@
 			$('#map-selector').append('<div><input type="radio" name="type" id="future_flood_map"/><span>Flood Insurance Map in 2016</span></div>');
 			
 			$('#legend').append('<legend>Flood Zones</legend>');
-			$('#legend').append('<canvas id="high_risk_and_waves" width="10" height="10" style="border:solid 1px #FF8C00;"></canvas> &nbsp V/VE (High Risk:Flooding & Waves)<br>');
+			$('#legend').append('<canvas id="high_risk_and_waves" width="10" height="10" style="border:solid 1px #FF8C00;"></canvas> &nbsp V/VE (High Risk: Flooding & Waves)<br>');
 			$('#legend').append('<canvas id="high_risk" width="10" height="10" style="border:solid 1px #9932CC;"></canvas> &nbsp A/AE/AO (High Risk: Flooding)<br>');
 			$('#legend').append('<canvas id="mod_risk" width="10" height="10" style="border:solid 1px #FFD700;"></canvas> &nbsp X (Moderate Risk)<br>');
 			
@@ -412,7 +405,7 @@
         function savePlace(place) {
             // ADD TO DATABASE
             var post_data = "formatted_address=" + place.formatted_address + "&latitude=" + place.geometry.location.lat() + "&longitude=" + place.geometry.location.lng();
-            var db_url = "./wp-content/themes/floodhelpny-wp/stat_tracking.php"
+            var db_url = "./wp-content/themes/floodhelpny-wp/library/db/stat_tracking.php"
             $.post(db_url, post_data)
         }
 
@@ -458,19 +451,19 @@
 
                 switch (borough) {
                     case 'Brooklyn':
-                        db_url = "./wp-content/themes/floodhelpny-wp/brooklyn.php";
+                        db_url = "./wp-content/themes/floodhelpny-wp/library/db/brooklyn.php";
                         break;
                     case 'Queens':
-                        db_url = "./wp-content/themes/floodhelpny-wp/queens.php";
+                        db_url = "./wp-content/themes/floodhelpny-wp/library/db/queens.php";
                         break;
                     case 'Staten Island':
-                        db_url = "./wp-content/themes/floodhelpny-wp/staten_island.php";
+                        db_url = "./wp-content/themes/floodhelpny-wp/library/db/staten_island.php";
                         break;
                     case 'Bronx':
-                        db_url = "./wp-content/themes/floodhelpny-wp/bronx.php";
+                        db_url = "./wp-content/themes/floodhelpny-wp/library/db/bronx.php";
                         break;
                     default:
-                        db_url = "./wp-content/themes/floodhelpny-wp/manhattan.php";
+                        db_url = "./wp-content/themes/floodhelpny-wp/library/db/manhattan.php";
                 }
                 var street_name = place_address.split(",")[0].toUpperCase();
                 street_name = "%" + street_name + "%"
@@ -500,7 +493,9 @@
                     year_built = data_bldg_date[0];
 
                     if (curr_ErrOutRange == 1 && fut_ErrOutRange == 1) {
-                        var outOfRange = "Flood map is only available for the NYC Metro Region!"
+                        var outOfRange = "As of now, FloodHelpNY only has flood map information for New York City."
+						    outOfRange += " You can look up your zone on <a href ='http://www.region2coastal.com/' target='_blank'>FEMA's website</a>"
+						    outOfRange += " and then check back to learn more about what it means for you on our <a href='http://floodhelpny.org/am-i-affected/' target='_blank'>Am I Affected</a> page."
                         info += outOfRange + "<br>";
                         infowindow.setContent("<p><strong>" + place_address + "</strong></p><p>" + outOfRange + "</p>");
                     } else {
@@ -518,8 +513,14 @@
                         if (curr_zone == "Unshaded X" || curr_zone.toUpperCase() == "OPEN WATER") {
                             curr_zone = "N/A"
                         }
+						if (curr_zone == "Shaded X") {
+                            curr_zone = "X"
+                        }
                         if (fut_zone == "Unshaded X" || fut_zone.toUpperCase() == "OPEN WATER") {
                             fut_zone = "N/A"
+                        }
+						if (fut_zone == "Shaded X" ) {
+                            fut_zone = "X"
                         }
 
 
@@ -589,6 +590,7 @@
                         $('#addressSearchForm').find('.form-results').hide();
                         $('#addressSearchForm').find(':button').hide();
                         $('#map-explanation').html(initialExplanatoryText);
+						$('#pac-input').val('');
                         $.removeCookie('address');
                         $.removeCookie('cFLD_ZONE');
                         $.removeCookie('cSTATIC_BFE');
@@ -599,17 +601,17 @@
                         map.setZoom(11);
 
                         infowindow.close();
-                        markers.pop().setMap(null);
-
-
-
+   
+						while( marker = markers.pop() ){
+							marker.setMap(null);
+						}
 
                     });
 
 
 
                     infowindow.setOptions({
-                        maxWidth: 1000
+                        maxWidth: 500
                     });
                     infowindow.open(map, marker);
 
