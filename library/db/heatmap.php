@@ -1,7 +1,8 @@
 <?php
-$dsn = 'mysql:dbname=stat_tracking;host=127.0.0.1';
-$user = 'root';
-$password = 'ffgdb2014!';
+$dbConn = parse_ini_file("dbprops.ini");
+$dsn = $dbConn['url'];
+$user = $dbConn['user'];
+$password = $dbConn['password'];
 try
 {
       $dbh = new PDO($dsn, $user, $password);
